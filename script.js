@@ -8,9 +8,37 @@ const eventsContainer = document.getElementById("eventsContainer");
 const registrationsContainer = document.getElementById("registrationsContainer");
 const eventSelect = document.getElementById("eventSelect");
 const registrationCount = document.getElementById("registrationCount");
+const eventCount = document.getElementById("eventCount");
 
 // const eventForm = document.getElementById("eventForm"); // Removed
 const registerForm = document.getElementById("registerForm");
+
+
+// NOTIFICATION TOAST SYSTEM
+
+function showNotification(message, type = 'success') {
+  const container = document.getElementById('notificationContainer');
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span>${message}</span>
+      <button class="notification-close">&times;</button>
+    </div>
+  `;
+
+  container.appendChild(notification);
+
+  // Close button handler
+  notification.querySelector('.notification-close').addEventListener('click', () => {
+    notification.remove();
+  });
+
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 5000);
+}
 
 
 // INITIAL LOAD
@@ -49,6 +77,9 @@ async function fetchEvents() {
 
     eventsContainer.innerHTML = "";
     eventSelect.innerHTML = `<option value="">Select Event</option>`;
+    
+    // Update event count
+    eventCount.textContent = events.length;
 
     if (!events.length) {
       eventsContainer.innerHTML = `
@@ -167,7 +198,7 @@ registerForm.addEventListener("submit", async (e) => {
   };
 
   if (!registration.studentName || !registration.email || !registration.eventId) {
-    alert("Please fill in all registration fields.");
+    showNotification("Please fill in all registration fields.", 'error');
     return;
   }
 
@@ -183,15 +214,15 @@ registerForm.addEventListener("submit", async (e) => {
     const data = await res.json();
 
     if (res.ok) {
-      alert("Registration successful!");
+      showNotification("✓ Registration successful! Thank you for registering.", 'success');
       registerForm.reset();
       await fetchRegistrations();
     } else {
-      alert(data.message || "Failed to register.");
+      showNotification(data.message || "Failed to register.", 'error');
     }
   } catch (error) {
     console.error("Error registering student:", error);
-    alert("Server error while registering.");
+    showNotification("Server error while registering.", 'error');
   }
 });
 

@@ -1,9 +1,4 @@
-#!/usr/bin/env node
 
-/**
- * Database Setup Script
- * Creates database and tables if they don't exist
- */
 
 const { Pool } = require("pg");
 require("dotenv").config();
