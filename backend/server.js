@@ -8,16 +8,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// =========================
+
 // HOME ROUTE
-// =========================
+
 app.get("/", (req, res) => {
   res.send("College Event Management Backend with PostgreSQL is running 🚀");
 });
 
-// =========================
+
 // GET ALL EVENTS
-// =========================
+
 app.get("/api/events", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM events ORDER BY date ASC");
@@ -28,9 +28,9 @@ app.get("/api/events", async (req, res) => {
   }
 });
 
-// =========================
+
 // ADD NEW EVENT
-// =========================
+
 app.post("/api/events", async (req, res) => {
   try {
     const { title, date, category, venue, description } = req.body;
@@ -56,9 +56,9 @@ app.post("/api/events", async (req, res) => {
   }
 });
 
-// =========================
+
 // REGISTER FOR EVENT
-// =========================
+
 app.post("/api/register", async (req, res) => {
   try {
     const { studentName, email, eventId } = req.body;
@@ -100,9 +100,9 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// =========================
+
 // GET ALL REGISTRATIONS
-// =========================
+
 app.get("/api/registrations", async (req, res) => {
   try {
     const result = await pool.query(`

@@ -1,4 +1,4 @@
-const API_URL = "https://project-d2xx.onrender.com/";
+const API_URL = "https://project-o2h0.onrender.com/";
 
 
 const eventsContainer = document.getElementById("eventsContainer");
