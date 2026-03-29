@@ -5,20 +5,64 @@ const path = require("path");
 // Load environment variables from .env
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
+// Environment detection
+const NODE_ENV = process.env.NODE_ENV || "development";
+const PORT = process.env.PORT || 5000;
+
+console.log("═══════════════════════════════════");
+console.log("🚀 Environment:", NODE_ENV);
+console.log("🔌 Port:", PORT);
+console.log("═══════════════════════════════════");
+
 // Log environment check
 if (!process.env.DATABASE_URL) {
-  console.error("ERROR: DATABASE_URL not set in .env file");
+  console.error("❌ ERROR: DATABASE_URL not set in .env file");
   console.log("Current directory:", __dirname);
   console.log("Environment variables loaded:", Object.keys(process.env).filter(k => k.includes("DATABASE") || k.includes("PORT")));
+  process.exit(1);
 }
 
 const pool = require("./db");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// CORS Configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "http://localhost:5000",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:5000",
+      "http://localhost",
+      "http://127.0.0.1",
+      // GitHub Pages domains
+      "https://rithesh-7464.github.io",
+      "https://rithesh-7464.github.io/project"
+    ];
+    
+    // In production, allow the request if origin is in allowedOrigins
+    if (NODE_ENV === "production") {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn("⚠️  CORS blocked origin:", origin);
+        callback(new Error("CORS policy violation"));
+      }
+    } else {
+      // In development, allow all origins
+      callback(null, true);
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+console.log("✓ CORS enabled for production domains");
 
 
 // INITIALIZE DATABASE ON STARTUP

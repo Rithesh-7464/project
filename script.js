@@ -1,7 +1,30 @@
-// Use localhost for development, Render for production
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? "http://localhost:5000"
-  : "https://project-o2h0.onrender.com";
+// ENVIRONMENT & API CONFIGURATION
+
+// Determine API URL based on hostname
+let API_URL = "https://project-o2h0.onrender.com"; // Production Render backend
+let ENV = "production";
+
+// Local development detection
+if (window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' || 
+    window.location.hostname === '::1') {
+  API_URL = "http://localhost:5000";
+  ENV = "development";
+}
+
+// GitHub Pages detection - use production backend
+if (window.location.hostname.includes('github.io')) {
+  API_URL = "https://project-o2h0.onrender.com";
+  ENV = "production (GitHub Pages)";
+}
+
+// Additional debug info
+console.log("═══════════════════════════════════");
+console.log("🚀 Environment:", ENV);
+console.log("🌐 Hostname:", window.location.hostname);
+console.log("🔗 API URL:", API_URL);
+console.log("📍 Page URL:", window.location.href);
+console.log("═══════════════════════════════════");
 
 
 const eventsContainer = document.getElementById("eventsContainer");
@@ -72,8 +95,15 @@ function showRegistrationsLoading() {
 
 async function fetchEvents() {
   try {
+    console.log("📡 Fetching events from:", `${API_URL}/api/events`);
     const res = await fetch(`${API_URL}/api/events`);
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
     const events = await res.json();
+    console.log("✓ Events loaded:", events.length, "events");
 
     eventsContainer.innerHTML = "";
     eventSelect.innerHTML = `<option value="">Select Event</option>`;
@@ -96,11 +126,13 @@ async function fetchEvents() {
       renderEventOption(event);
     });
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error("❌ Error fetching events:", error);
     eventsContainer.innerHTML = `
       <div class="event-card">
         <h3>Unable to Load Events</h3>
-        <p>Please check if your backend is running correctly.</p>
+        <p>Error: ${error.message}</p>
+        <p>Backend URL: ${API_URL}</p>
+        <p>Please check your network or contact support.</p>
       </div>
     `;
   }
@@ -139,8 +171,15 @@ function renderEventOption(event) {
 
 async function fetchRegistrations() {
   try {
+    console.log("📡 Fetching registrations from:", `${API_URL}/api/registrations`);
     const res = await fetch(`${API_URL}/api/registrations`);
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
     const registrations = await res.json();
+    console.log("✓ Registrations loaded:", registrations.length);
 
     registrationsContainer.innerHTML = "";
     registrationCount.textContent = registrations.length;
@@ -159,11 +198,11 @@ async function fetchRegistrations() {
       renderRegistrationCard(registration);
     });
   } catch (error) {
-    console.error("Error fetching registrations:", error);
+    console.error("❌ Error fetching registrations:", error);
     registrationsContainer.innerHTML = `
       <div class="registration-card">
         <h4>Unable to Load Registrations</h4>
-        <p>Please check if your backend is running correctly.</p>
+        <p>Error: ${error.message}</p>
       </div>
     `;
   }

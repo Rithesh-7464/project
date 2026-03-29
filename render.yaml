@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: event-management-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node setup-db.js && npm start
+    envVars:
+      - key: DATABASE_URL
+        scope: build,runtime
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
+    memoryRequest: 512
+    memoryLimit: 512
+    cpuRequest: 0.5
+    cpuLimit: 1
+    plan: free
+    envVarGroups:
+      - name: database
+        envVars:
+          - key: DATABASE_URL
+            sync: false
+

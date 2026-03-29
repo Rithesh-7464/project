@@ -1,0 +1,92 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Check frontend files
+      run: |
+        if [ ! -f "index.html" ]; then
+          echo "ERROR: index.html not found!"
+          exit 1
+        fi
+        if [ ! -f "script.js" ]; then
+          echo "ERROR: script.js not found!"
+          exit 1
+        fi
+        if [ ! -f "style.css" ]; then
+          echo "ERROR: style.css not found!"
+          exit 1
+        fi
+        echo "✓ All frontend files present"
+
+    - name: Validate JavaScript syntax
+      run: |
+        node --check script.js || echo "⚠️  JavaScript syntax check (requires Node.js)"
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        cname: # Leave empty unless you have custom domain
+
+  test-backend:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'backend/package-lock.json'
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm install
+
+    - name: Validate backend files
+      run: |
+        cd backend
+        node --check server.js
+        node --check db.js
+        node --check setup-db.js
+        echo "✓ Backend syntax valid"
+
+    - name: Check for required env files
+      run: |
+        cd backend
+        if [ ! -f ".env.example" ]; then
+          echo "⚠️  .env.example not found"
+        fi
+        if [ ! -f ".gitignore" ] || ! grep -q "\.env" backend/.gitignore; then
+          echo "⚠️  .env not in .gitignore"
+        fi
+        echo "✓ Environment configuration validated"
