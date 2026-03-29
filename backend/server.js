@@ -1,6 +1,17 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config(); // Load environment variables from .env
+const path = require("path");
+
+// Load environment variables from .env
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+
+// Log environment check
+if (!process.env.DATABASE_URL) {
+  console.error("ERROR: DATABASE_URL not set in .env file");
+  console.log("Current directory:", __dirname);
+  console.log("Environment variables loaded:", Object.keys(process.env).filter(k => k.includes("DATABASE") || k.includes("PORT")));
+}
+
 const pool = require("./db");
 
 const app = express();
@@ -8,6 +19,59 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+
+// INITIALIZE DATABASE ON STARTUP
+async function initializeDatabase() {
+  try {
+    // Check if tables exist
+    const tableCheck = await pool.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'events'
+      );
+    `);
+    
+    if (!tableCheck.rows[0].exists) {
+      console.log("Initializing database tables...");
+      
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS events (
+          id SERIAL PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          date TIMESTAMP NOT NULL,
+          category VARCHAR(100),
+          venue VARCHAR(255),
+          description TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS registrations (
+          id SERIAL PRIMARY KEY,
+          student_name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      
+      await pool.query(`
+        CREATE INDEX IF NOT EXISTS idx_event_id ON registrations(event_id);
+      `);
+      
+      console.log("Database tables created successfully!");
+    } else {
+      console.log("Database tables already exist!");
+    }
+  } catch (error) {
+    console.error("Error initializing database:", error.message);
+  }
+}
+
+// Initialize database before starting server
+initializeDatabase();
 
 
 // HOME ROUTE

@@ -4,6 +4,7 @@
   "description": "Backend for College Event Management Website using PostgreSQL",
   "main": "server.js",
   "scripts": {
+    "setup": "node setup-db.js",
     "start": "node server.js"
   },
   "author": "Ashin",
