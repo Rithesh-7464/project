@@ -144,6 +144,50 @@ app.get("/", (req, res) => {
 });
 
 
+// SETUP ENDPOINT - Populate database with sample events
+app.get("/api/setup", async (req, res) => {
+  try {
+    console.log("Running setup endpoint...");
+    
+    // Check current event count
+    const countEvents = await pool.query("SELECT COUNT(*) FROM events");
+    const currentCount = parseInt(countEvents.rows[0].count);
+    console.log(`Current events in database: ${currentCount}`);
+    
+    // Insert missing events
+    const existingTitles = await pool.query("SELECT title FROM events");
+    const titles = existingTitles.rows.map(r => r.title);
+    
+    const eventsToAdd = [
+      { title: 'Annual Tech Summit', date: '2026-04-15 10:00:00', category: 'Technical', venue: 'Auditorium A', description: 'A comprehensive tech summit featuring latest innovations' },
+      { title: 'Cultural Fest', date: '2026-05-01 16:00:00', category: 'Cultural', venue: 'Open Grounds', description: 'Celebrate diverse cultures with performances and food' },
+      { title: 'Sports Championship', date: '2026-05-20 08:00:00', category: 'Sports', venue: 'Sports Complex', description: 'Inter-college sports competition' },
+      { title: 'Coding Challenge', date: '2026-04-22 09:00:00', category: 'Technical', venue: 'Computer Lab', description: 'Compete in a 3-hour coding competition with exciting prizes' },
+      { title: 'Art & Music Festival', date: '2026-05-10 18:00:00', category: 'Cultural', venue: 'Amphitheater', description: 'Showcase your artistic talents through performances and exhibitions' }
+    ];
+    
+    for (const event of eventsToAdd) {
+      if (!titles.includes(event.title)) {
+        await pool.query(
+          `INSERT INTO events (title, date, category, venue, description) VALUES ($1, $2, $3, $4, $5)`,
+          [event.title, event.date, event.category, event.venue, event.description]
+        );
+        console.log(`✓ Added: ${event.title}`);
+      }
+    }
+    
+    const finalCount = await pool.query("SELECT COUNT(*) FROM events");
+    res.json({
+      message: "Setup complete!",
+      totalEvents: finalCount.rows[0].count
+    });
+  } catch (error) {
+    console.error("Setup error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 // GET ALL EVENTS
 
 app.get("/api/events", async (req, res) => {
