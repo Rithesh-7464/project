@@ -1,0 +1,28 @@
+-- EVENTS TABLE
+CREATE TABLE IF NOT EXISTS events (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    venue VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL
+);
+
+-- REGISTRATIONS TABLE
+CREATE TABLE IF NOT EXISTS registrations (
+    id SERIAL PRIMARY KEY,
+    student_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- SAMPLE EVENTS
+INSERT INTO events (title, date, category, venue, description)
+VALUES
+('Tech Fest 2026', '2026-04-10', 'Technology', 'Main Auditorium', 'A college-wide technology festival with coding, robotics, and innovation challenges.'),
+('Cultural Night', '2026-04-18', 'Cultural', 'Open Stage', 'An exciting evening of dance, music, drama, and student performances.'),
+('Hackathon 24 Hours', '2026-05-02', 'Coding', 'Computer Lab Block A', 'A 24-hour coding competition where students build innovative software solutions.'),
+('Sports Meet 2026', '2026-05-12', 'Sports', 'College Sports Ground', 'Annual inter-department sports competition including football, cricket, athletics, and more.'),
+('Entrepreneurship Seminar', '2026-05-20', 'Seminar', 'Seminar Hall 2', 'A seminar featuring startup founders and business experts sharing ideas on entrepreneurship and innovation.')
+ON CONFLICT DO NOTHING;

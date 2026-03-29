@@ -1,0 +1,501 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", "Poppins", sans-serif;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --bg-soft: #111111;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text: #ffffff;
+  --muted: #b8b8b8;
+  --soft: #8c8c8c;
+  --white: #ffffff;
+  --black: #000000;
+  --hover: rgba(255, 255, 255, 0.08);
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* =========================
+   BODY & BACKGROUND
+========================= */
+body {
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: -2;
+}
+
+body::before {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,255,255,0.06), transparent 70%);
+  top: -120px;
+  left: -120px;
+}
+
+body::after {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%);
+  bottom: -120px;
+  right: -100px;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 18px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 10, 10, 0.78);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+
+.navbar nav {
+  display: flex;
+  gap: 24px;
+}
+
+.navbar nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.96rem;
+  font-weight: 500;
+  transition: 0.3s ease;
+  position: relative;
+}
+
+.navbar nav a:hover {
+  color: var(--white);
+}
+
+.navbar nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 1.5px;
+  background: var(--white);
+  transition: 0.3s ease;
+}
+
+.navbar nav a:hover::after {
+  width: 100%;
+}
+
+/* =========================
+   HERO
+========================= */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 8%;
+  text-align: center;
+  position: relative;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+    var(--bg);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+  opacity: 0.3;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.hero-tag {
+  display: inline-block;
+  color: var(--soft);
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+  border: 1px solid var(--card-border);
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+}
+
+.hero h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 22px;
+  letter-spacing: -1px;
+}
+
+.hero-sub {
+  color: var(--muted);
+  font-size: 1.08rem;
+  max-width: 720px;
+  margin: 0 auto 32px;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid var(--card-border);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 0.98rem;
+}
+
+.btn-primary {
+  background: var(--white);
+  color: var(--black);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 35px rgba(255, 255, 255, 0.12);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  background: var(--hover);
+  transform: translateY(-3px);
+}
+
+/* =========================
+   STATS
+========================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  padding: 0 8%;
+  margin-top: -80px;
+  position: relative;
+  z-index: 5;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  padding: 30px;
+  text-align: center;
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  transition: 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  background: rgba(255,255,255,0.06);
+}
+
+.stat-card h2 {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+
+.stat-card p {
+  color: var(--muted);
+}
+
+/* =========================
+   GENERAL SECTIONS
+========================= */
+.section {
+  padding: 100px 8%;
+}
+
+.section-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 50px;
+}
+
+.section-tag {
+  color: var(--soft);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.section-header h2 {
+  font-size: 2.7rem;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+.section-header p {
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+/* =========================
+   EVENTS GRID
+========================= */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 28px;
+}
+
+.event-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  padding: 28px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  transition: all 0.35s ease;
+  overflow: hidden;
+}
+
+.event-card::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(255,255,255,0.07), transparent 70%);
+  top: -40px;
+  right: -40px;
+  opacity: 0;
+  transition: 0.4s ease;
+}
+
+.event-card:hover::before {
+  opacity: 1;
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255,255,255,0.06);
+}
+
+.badge {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.05);
+  color: var(--white);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.event-card h3 {
+  font-size: 1.45rem;
+  margin-bottom: 14px;
+  color: var(--white);
+}
+
+.event-card p {
+  color: var(--muted);
+  margin-bottom: 10px;
+  font-size: 0.96rem;
+}
+
+/* =========================
+   REGISTRATION FORM
+========================= */
+.form-card {
+  max-width: 760px;
+  margin: auto;
+  display: grid;
+  gap: 18px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  padding: 34px;
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.form-card input,
+.form-card textarea,
+.form-card select {
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.03);
+  color: var(--white);
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s ease;
+}
+
+.form-card input:focus,
+.form-card textarea:focus,
+.form-card select:focus {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255,255,255,0.05);
+}
+
+.form-card input::placeholder,
+.form-card textarea::placeholder {
+  color: var(--soft);
+}
+
+/* Dropdown options visible on dark theme */
+.form-card select option {
+  color: var(--text);
+  background: var(--bg-soft);
+}
+
+/* =========================
+   REGISTRATIONS LIST
+========================= */
+.registration-list {
+  max-width: 900px;
+  margin: auto;
+  display: grid;
+  gap: 20px;
+}
+
+.registration-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 24px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  transition: 0.3s ease;
+}
+
+.registration-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.06);
+}
+
+.registration-card h4 {
+  font-size: 1.2rem;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.registration-card p {
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer {
+  padding: 28px;
+  text-align: center;
+  color: var(--soft);
+  border-top: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.02);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+  .hero h1 {
+    font-size: 3rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 6%;
+  }
+
+  .navbar nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .hero {
+    padding: 100px 6% 80px;
+  }
+
+  .hero h1 {
+    font-size: 2.35rem;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+  }
+
+  .stats {
+    margin-top: 20px;
+    padding: 0 6%;
+  }
+
+  .section {
+    padding: 80px 6%;
+  }
+
+  .section-header h2 {
+    font-size: 2rem;
+  }
+
+  .form-card {
+    padding: 24px;
+  }
+}
