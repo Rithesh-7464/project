@@ -109,6 +109,25 @@ async function initializeDatabase() {
     } else {
       console.log("Database tables already exist!");
     }
+    
+    // Check if events exist and insert if empty
+    const eventCount = await pool.query("SELECT COUNT(*) FROM events");
+    if (parseInt(eventCount.rows[0].count) === 0) {
+      console.log("Inserting sample events...");
+      
+      await pool.query(`
+        INSERT INTO events (title, date, category, venue, description) VALUES
+        ('Annual Tech Summit', '2026-04-15 10:00:00', 'Technical', 'Auditorium A', 'A comprehensive tech summit featuring latest innovations'),
+        ('Cultural Fest', '2026-05-01 16:00:00', 'Cultural', 'Open Grounds', 'Celebrate diverse cultures with performances and food'),
+        ('Sports Championship', '2026-05-20 08:00:00', 'Sports', 'Sports Complex', 'Inter-college sports competition'),
+        ('Coding Challenge', '2026-04-22 09:00:00', 'Technical', 'Computer Lab', 'Compete in a 3-hour coding competition with exciting prizes'),
+        ('Art & Music Festival', '2026-05-10 18:00:00', 'Cultural', 'Amphitheater', 'Showcase your artistic talents through performances and exhibitions');
+      `);
+      
+      console.log("✓ Sample events inserted (5 events)");
+    } else {
+      console.log(`✓ Events already exist (${eventCount.rows[0].count} events)`);
+    }
   } catch (error) {
     console.error("Error initializing database:", error.message);
   }
