@@ -1,4 +1,7 @@
-const API_URL = "https://project-o2h0.onrender.com/";
+// Use localhost for development, Render for production
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? "http://localhost:5000"
+  : "https://project-o2h0.onrender.com";
 
 
 const eventsContainer = document.getElementById("eventsContainer");
@@ -9,9 +12,8 @@ const registrationCount = document.getElementById("registrationCount");
 // const eventForm = document.getElementById("eventForm"); // Removed
 const registerForm = document.getElementById("registerForm");
 
-// =========================
+
 // INITIAL LOAD
-// =========================
 window.addEventListener("DOMContentLoaded", async () => {
   showEventsLoading();
   showRegistrationsLoading();
@@ -20,9 +22,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   await fetchRegistrations();
 });
 
-// =========================
+
 // EVENTS LOADING UI
-// =========================
+
 function showEventsLoading() {
   eventsContainer.innerHTML = `
     <div class="event-card"><p>Loading events...</p></div>
@@ -37,9 +39,9 @@ function showRegistrationsLoading() {
   `;
 }
 
-// =========================
+
 // FETCH EVENTS
-// =========================
+
 async function fetchEvents() {
   try {
     const res = await fetch(`${API_URL}/api/events`);
@@ -73,9 +75,9 @@ async function fetchEvents() {
   }
 }
 
-// =========================
+
 // RENDER EVENT CARD
-// =========================
+
 function renderEventCard(event) {
   const card = document.createElement("div");
   card.className = "event-card";
@@ -91,9 +93,9 @@ function renderEventCard(event) {
   eventsContainer.appendChild(card);
 }
 
-// =========================
+
 // ADD EVENT TO DROPDOWN
-// =========================
+
 function renderEventOption(event) {
   const option = document.createElement("option");
   option.value = event.id;
@@ -101,9 +103,9 @@ function renderEventOption(event) {
   eventSelect.appendChild(option);
 }
 
-// =========================
+
 // FETCH REGISTRATIONS
-// =========================
+
 async function fetchRegistrations() {
   try {
     const res = await fetch(`${API_URL}/api/registrations`);
@@ -136,9 +138,9 @@ async function fetchRegistrations() {
   }
 }
 
-// =========================
+
 // RENDER REGISTRATION CARD
-// =========================
+
 function renderRegistrationCard(registration) {
   const card = document.createElement("div");
   card.className = "registration-card";
@@ -152,9 +154,9 @@ function renderRegistrationCard(registration) {
   registrationsContainer.appendChild(card);
 }
 
-// =========================
+
 // REGISTER STUDENT
-// =========================
+
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -193,9 +195,9 @@ registerForm.addEventListener("submit", async (e) => {
   }
 });
 
-// =========================
+
 // DATE FORMATTER
-// =========================
+
 function formatDate(dateString) {
   const date = new Date(dateString);
 

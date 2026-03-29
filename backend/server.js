@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config(); // Load environment variables from .env
 const pool = require("./db");
 
 const app = express();
